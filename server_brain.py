@@ -1,6 +1,6 @@
-# Server_brain.py
+# server_brain.py
 from fastapi import FastAPI, UploadFile, File
-import face_recognition, numpy as np, os, json
+import face_recognition, numpy as np, os, cv2
 from datetime import datetime
 
 app = FastAPI()
@@ -44,7 +44,7 @@ async def check_face(file: UploadFile = File(...)):
         distances = face_recognition.face_distance(known_encodings, face_enc)
         if len(distances) > 0:
             best_match = np.argmin(distances)
-            if distances[best_match] > 0.45: # Threshold
+            if distances[best_match] > 0.45:  # Threshold
                 is_intruder = True
     
     # 3. Save Log if Intruder (Server storage, not Pi)
@@ -57,5 +57,3 @@ async def check_face(file: UploadFile = File(...)):
 
     # 4. Tell Pi what to do
     return {"is_intruder": is_intruder}
-
-# Keep your existing WebSocket/Telemetry code here too!
